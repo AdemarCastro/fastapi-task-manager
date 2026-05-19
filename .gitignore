@@ -1,0 +1,50 @@
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# === AMBIENTE VIRTUAL ===
+.venv/
+venv/
+env/
+ENV/
+
+# === VARIÁVEIS DE AMBIENTE ===
+.env
+.env.local
+.env.*.local
+.env.bak
+*.env
+
+# === TESTES & COBERTURA ===
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.log
+
+# === IDE & EDITORES ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === SISTEMA OPERACIONAL ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === FERRAMENTAS DE QUALIDADE ===
+.mypy_cache/
+.ropeproject/
+.hypothesis/
+.pytype/
