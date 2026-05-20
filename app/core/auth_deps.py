@@ -1,14 +1,14 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from app.core.security import decode_token
 from app.db.session import get_db
 from app.models.user import User
-from app.core.security import decode_token
 
 security = HTTPBearer(
     scheme_name="BearerAuth",
-    description="JWT Access Token. Copy the token from /auth/login and paste it here."
+    description="JWT Access Token. Copy the token from /auth/login and paste it here.",
 )
 
 
