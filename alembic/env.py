@@ -11,11 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from app.core.config import settings
 from app.models.base import Base
 
-# Importar models para que sejam registrados no metadata
-from app.models.user import User
-from app.models.task import Task
-
-
 config = context.config
 
 # Define a URL do banco vinda do .env
