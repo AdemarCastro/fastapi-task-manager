@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Task Manager API"
     VERSION: str = "0.1.0"
@@ -10,5 +11,6 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+
 
 settings = Settings()

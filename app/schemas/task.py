@@ -1,18 +1,23 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict
+
 
 class TaskBase(BaseModel):
     title: str
     description: str | None = None
     is_done: bool = False
 
+
 class TaskCreate(TaskBase):
     pass
+
 
 class TaskUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
     is_done: bool | None = None
+
 
 class TaskResponse(TaskBase):
     model_config = ConfigDict(from_attributes=True)

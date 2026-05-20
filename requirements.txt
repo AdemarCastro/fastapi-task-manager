@@ -9,4 +9,6 @@ python-jose
 bcrypt
 httpx
 pytest
+pytest-cov
 email-validator
+ruff

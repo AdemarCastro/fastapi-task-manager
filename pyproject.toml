@@ -1,0 +1,40 @@
+[tool.ruff]
+# Versão do Python do projeto
+target-version = "py310"
+
+# Linhas máximas por linha (padrão Black)
+line-length = 100
+
+# Arquivos/pastas a ignorar
+exclude = [
+    ".venv",
+    "__pycache__",
+    ".pytest_cache",
+    "alembic/versions",
+]
+
+[tool.ruff.lint]
+# Regras ativadas por padrão + extensões úteis
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort (organização de imports)
+    "N",   # pep8-naming
+    "UP",  # pyupgrade (sintaxes modernas do Python)
+]
+
+# Regras ignoradas (ajuste conforme preferência)
+ignore = [
+    "E501",  # Line length (já controlado pelo Black/ruff format)
+]
+
+[tool.ruff.lint.isort]
+# Agrupar imports de forma consistente
+known-first-party = ["app"]
+known-third-party = ["fastapi", "sqlalchemy", "pydantic"]
+
+[tool.pytest.ini_options]
+# Configurações do pytest
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

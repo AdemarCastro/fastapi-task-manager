@@ -25,6 +25,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY app/ ./app/
 COPY alembic/ ./alembic/
 COPY alembic.ini .
+COPY pyproject.toml .
 
 RUN useradd --create-home --shell /bin/bash appuser && \
     chown -R appuser:appuser /app
