@@ -17,6 +17,7 @@ router = APIRouter(
     },
 )
 
+
 # ------------------------------------------------------------
 # REGISTER
 # ------------------------------------------------------------
@@ -74,9 +75,7 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
             detail="Usuário inativo",
         )
 
-    access_token = create_access_token(
-        {"sub": str(user.id), "email": user.email}
-    )
+    access_token = create_access_token({"sub": str(user.id), "email": user.email})
     refresh_token = create_refresh_token({"sub": str(user.id)})
 
     return {
@@ -117,9 +116,7 @@ def refresh_token(token_data: TokenRefresh, db: Session = Depends(get_db)):
             detail="Usuário não encontrado ou inativo",
         )
 
-    new_access = create_access_token(
-        {"sub": str(user.id), "email": user.email}
-    )
+    new_access = create_access_token({"sub": str(user.id), "email": user.email})
     new_refresh = create_refresh_token({"sub": str(user.id)})
 
     return {

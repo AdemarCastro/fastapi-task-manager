@@ -1,8 +1,8 @@
 from fastapi import FastAPI
+from fastapi.security import HTTPBearer
+
 from app.api import auth, tasks
 from app.core.config import settings
-from fastapi.openapi.utils import get_openapi
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 security = HTTPBearer()
 
@@ -17,6 +17,7 @@ app = FastAPI(
 
 app.include_router(auth.router, tags=["Authentication"])
 app.include_router(tasks.router, tags=["Tasks"])
+
 
 @app.get("/health", tags=["System"])
 def health_check():
