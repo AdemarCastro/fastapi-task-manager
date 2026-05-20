@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Virtual env (NÃO copiar para a imagem!)
+.venv/
+venv/
+env/
+
+# Environment variables (segurança!)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Tests & coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.log
+
+# IDE & editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Docker (evitar loop)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docs (opcional, para imagem menor)
+*.md
+docs/
