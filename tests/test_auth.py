@@ -2,8 +2,12 @@ from app.core.security import get_password_hash
 from app.models.user import User
 
 
+# -------------------------------------------------------------------
+# USER REGISTRATION TESTS
+# -------------------------------------------------------------------
 def test_register_user(client):
     """Tests user registration endpoint."""
+
     response = client.post(
         "/auth/register",
         json={
@@ -18,6 +22,7 @@ def test_register_user(client):
 
 def test_register_duplicate_email(client):
     """Tests that registering with an existing email returns an error."""
+
     client.post(
         "/auth/register",
         json={
@@ -38,8 +43,12 @@ def test_register_duplicate_email(client):
     assert "already registered" in response.json()["detail"].lower()
 
 
+# -------------------------------------------------------------------
+# LOGIN TESTS
+# -------------------------------------------------------------------
 def test_login_success(client, db_session):
     """Tests successful login and token generation."""
+
     user = User(
         email="login@test.com",
         hashed_password=get_password_hash("pass123"),
@@ -66,6 +75,7 @@ def test_login_success(client, db_session):
 
 def test_login_invalid_credentials(client):
     """Tests login with invalid credentials."""
+
     response = client.post(
         "/auth/login",
         json={

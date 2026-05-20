@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
@@ -8,9 +10,23 @@ from app.db.session import get_db
 from app.main import app
 from app.models import Base
 
-TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:5433/taskmanager_test"
-ADMIN_DATABASE_URL = "postgresql://postgres:postgres@localhost:5433/postgres"
+# -------------------------------------------------------------------
+# DATABASE CONFIG (ENV-FIRST + FALLBACK)
+# -------------------------------------------------------------------
+TEST_DATABASE_URL = os.getenv(
+    "TEST_DATABASE_URL",
+    "postgresql://postgres:postgres@localhost:5433/taskmanager_test",
+)
 
+ADMIN_DATABASE_URL = os.getenv(
+    "ADMIN_DATABASE_URL",
+    "postgresql://postgres:postgres@localhost:5433/postgres",
+)
+
+
+# -------------------------------------------------------------------
+# ADMIN ENGINE (used to create test DB if needed)
+# -------------------------------------------------------------------
 admin_engine = create_engine(
     ADMIN_DATABASE_URL,
     connect_args={"sslmode": "disable"},
@@ -19,15 +35,23 @@ admin_engine = create_engine(
 
 def create_test_database_if_not_exists():
     """Creates the test database if it does not already exist."""
-    with admin_engine.connect() as conn:
-        conn.execution_options(isolation_level="AUTOCOMMIT")
+    try:
+        if os.getenv("GITHUB_ACTIONS") == "true":
+            return
 
-        result = conn.execute(
-            text("SELECT 1 FROM pg_database WHERE datname = 'taskmanager_test'")
-        ).scalar()
+        with admin_engine.connect() as conn:
+            conn = conn.execution_options(isolation_level="AUTOCOMMIT")
 
-        if not result:
-            conn.execute(text("CREATE DATABASE taskmanager_test"))
+            result = conn.execute(
+                text("SELECT 1 FROM pg_database WHERE datname = 'taskmanager_test'")
+            ).scalar()
+
+            if not result:
+                conn.execute(text("CREATE DATABASE taskmanager_test"))
+
+    except Exception:
+        # Ignore failures (CI environments, limited permissions, etc.)
+        pass
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -37,6 +61,9 @@ def ensure_test_db_exists():
     yield
 
 
+# -------------------------------------------------------------------
+# TEST ENGINE
+# -------------------------------------------------------------------
 engine_test = create_engine(
     TEST_DATABASE_URL,
     connect_args={"sslmode": "disable"},
@@ -50,9 +77,12 @@ SessionTest = sessionmaker(
 )
 
 
+# -------------------------------------------------------------------
+# DB LIFECYCLE
+# -------------------------------------------------------------------
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
-    """Creates all database tables at test startup and drops them at the end."""
+    """Creates all tables before tests and drops them after."""
     Base.metadata.create_all(bind=engine_test)
     yield
     Base.metadata.drop_all(bind=engine_test)
@@ -61,8 +91,8 @@ def setup_test_db():
 @pytest.fixture
 def db_session():
     """
-    Provides a database session with transaction rollback isolation
-    to ensure full test independence.
+    Provides a transactional database session with full rollback isolation.
+    Ensures complete test independence.
     """
     connection = engine_test.connect()
     transaction = connection.begin()
@@ -80,6 +110,9 @@ def db_session():
         connection.close()
 
 
+# -------------------------------------------------------------------
+# FASTAPI CLIENT
+# -------------------------------------------------------------------
 @pytest.fixture
 def client(db_session: Session):
     """
@@ -101,10 +134,13 @@ def client(db_session: Session):
     app.dependency_overrides.clear()
 
 
+# -------------------------------------------------------------------
+# PYTEST CONFIG
+# -------------------------------------------------------------------
 def pytest_configure(config):
     """
-    Pytest hook for global test configuration.
-    Suppresses known deprecation warnings during test execution.
+    Global pytest configuration hook.
+    Suppresses known deprecation warnings (e.g., pydantic).
     """
     import warnings
 

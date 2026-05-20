@@ -26,6 +26,12 @@ app.include_router(tasks.router, tags=["Tasks"])
     description="Checks if the API is running and operational.",
 )
 def health_check():
+    """
+    Health check endpoint.
+
+    Returns the current status of the API to verify if the service
+    is running correctly.
+    """
     return {
         "status": "ok",
         "message": "API is running",

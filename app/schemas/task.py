@@ -4,6 +4,12 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class TaskBase(BaseModel):
+    """
+    Base schema for task data.
+
+    Contains shared fields used across create, update, and response schemas.
+    """
+
     title: str = Field(
         ...,
         description="Task title",
@@ -21,10 +27,20 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
+    """
+    Schema used for creating a new task.
+    """
+
     pass
 
 
 class TaskUpdate(BaseModel):
+    """
+    Schema used for updating an existing task.
+
+    All fields are optional to allow partial updates.
+    """
+
     title: str | None = Field(
         None,
         description="Updated task title",
@@ -40,6 +56,12 @@ class TaskUpdate(BaseModel):
 
 
 class TaskResponse(TaskBase):
+    """
+    Schema returned by the API when retrieving tasks.
+
+    Includes database-generated fields such as id and timestamps.
+    """
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(

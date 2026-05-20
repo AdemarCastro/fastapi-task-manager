@@ -5,22 +5,65 @@ from app.models.user import User
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
+    """
+    Retrieves a user by email address.
+
+    Args:
+        db (Session): Database session.
+        email (str): User email to search for.
+
+    Returns:
+        User | None: User instance if found, otherwise None.
+    """
     return db.query(User).filter(User.email == email).first()
 
 
 def create_user(db: Session, email: str, password: str) -> User:
+    """
+    Creates a new user in the database.
+
+    The password is securely hashed before storage.
+
+    Args:
+        db (Session): Database session.
+        email (str): User email.
+        password (str): Plain text password.
+
+    Returns:
+        User: Created user instance.
+    """
     hashed_password = get_password_hash(password)
-    user = User(email=email, hashed_password=hashed_password)
+
+    user = User(
+        email=email,
+        hashed_password=hashed_password,
+    )
+
     db.add(user)
     db.commit()
     db.refresh(user)
+
     return user
 
 
 def authenticate_user(db: Session, email: str, password: str) -> User | None:
+    """
+    Authenticates a user using email and password.
+
+    Args:
+        db (Session): Database session.
+        email (str): User email.
+        password (str): Plain text password.
+
+    Returns:
+        User | None: Authenticated user if credentials are valid, otherwise None.
+    """
     user = get_user_by_email(db, email)
+
     if not user:
         return None
+
     if not verify_password(password, user.hashed_password):
         return None
+
     return user
