@@ -11,9 +11,9 @@ router = APIRouter(
     prefix="/auth",
     tags=["Authentication"],
     responses={
-        400: {"description": "Requisição inválida"},
-        401: {"description": "Não autorizado"},
-        403: {"description": "Acesso proibido"},
+        400: {"description": "Bad Request"},
+        401: {"description": "Unauthorized"},
+        403: {"description": "Forbidden"},
     },
 )
 
@@ -25,23 +25,24 @@ router = APIRouter(
     "/register",
     response_model=dict,
     status_code=status.HTTP_201_CREATED,
-    summary="Registrar novo usuário",
+    summary="Register a new user",
     description=(
-        "Cria uma nova conta de usuário no sistema.\n\n"
-        "O e-mail deve ser único. Caso já exista, a requisição será rejeitada."
+        "Creates a new user account in the system.\n\n"
+        "The email must be unique. If the email already exists, "
+        "the request will be rejected."
     ),
 )
 def register(user_in: UserRegister, db: Session = Depends(get_db)):
     if get_user_by_email(db, user_in.email):
         raise HTTPException(
             status_code=400,
-            detail="Email já está registrado",
+            detail="Email is already registered",
         )
 
     user = create_user(db, user_in.email, user_in.password)
 
     return {
-        "message": "Usuário criado com sucesso",
+        "message": "User created successfully",
         "user_id": user.id,
     }
 
@@ -52,12 +53,12 @@ def register(user_in: UserRegister, db: Session = Depends(get_db)):
 @router.post(
     "/login",
     response_model=Token,
-    summary="Autenticar usuário",
+    summary="Authenticate user",
     description=(
-        "Realiza autenticação do usuário e retorna tokens JWT.\n\n"
-        "Retorna:\n"
-        "- access_token: usado para autenticar requisições\n"
-        "- refresh_token: usado para gerar novos access tokens"
+        "Authenticates a user and returns JWT tokens.\n\n"
+        "Returns:\n"
+        "- access_token: used to authenticate requests\n"
+        "- refresh_token: used to generate new access tokens"
     ),
 )
 def login(user_in: UserLogin, db: Session = Depends(get_db)):
@@ -66,13 +67,13 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(
             status_code=401,
-            detail="Credenciais inválidas",
+            detail="Invalid credentials",
         )
 
     if not user.is_active:
         raise HTTPException(
             status_code=403,
-            detail="Usuário inativo",
+            detail="Inactive user",
         )
 
     access_token = create_access_token({"sub": str(user.id), "email": user.email})
@@ -90,10 +91,11 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
 @router.post(
     "/refresh",
     response_model=Token,
-    summary="Renovar tokens JWT",
+    summary="Refresh JWT tokens",
     description=(
-        "Gera novos tokens JWT a partir de um refresh token válido.\n\n"
-        "Se o refresh token for inválido ou expirado, a requisição será rejeitada."
+        "Generates new JWT tokens using a valid refresh token.\n\n"
+        "If the refresh token is invalid or expired, "
+        "the request will be rejected."
     ),
 )
 def refresh_token(token_data: TokenRefresh, db: Session = Depends(get_db)):
@@ -105,7 +107,7 @@ def refresh_token(token_data: TokenRefresh, db: Session = Depends(get_db)):
     if not payload or "sub" not in payload:
         raise HTTPException(
             status_code=401,
-            detail="Refresh token inválido",
+            detail="Invalid refresh token",
         )
 
     user = db.query(User).filter(User.id == int(payload["sub"])).first()
@@ -113,7 +115,7 @@ def refresh_token(token_data: TokenRefresh, db: Session = Depends(get_db)):
     if not user or not user.is_active:
         raise HTTPException(
             status_code=401,
-            detail="Usuário não encontrado ou inativo",
+            detail="User not found or inactive",
         )
 
     new_access = create_access_token({"sub": str(user.id), "email": user.email})

@@ -17,9 +17,9 @@ router = APIRouter(
     prefix="/tasks",
     tags=["Tasks"],
     responses={
-        401: {"description": "Não autenticado"},
-        403: {"description": "Acesso negado"},
-        404: {"description": "Recurso não encontrado"},
+        401: {"description": "Unauthorized"},
+        403: {"description": "Forbidden"},
+        404: {"description": "Not Found"},
     },
 )
 
@@ -30,15 +30,24 @@ router = APIRouter(
 @router.get(
     "",
     response_model=list[TaskResponse],
-    summary="Listar tarefas do usuário",
+    summary="List user tasks",
     description=(
-        "Retorna todas as tarefas pertencentes ao usuário autenticado.\n\n"
-        "Suporta paginação via `skip` e `limit`."
+        "Returns all tasks belonging to the authenticated user.\n\n"
+        "Supports pagination using `skip` and `limit`."
     ),
 )
 def list_tasks(
-    skip: int = Query(0, ge=0, description="Número de registros para pular (paginação)"),
-    limit: int = Query(100, ge=1, le=100, description="Quantidade máxima de tarefas retornadas"),
+    skip: int = Query(
+        0,
+        ge=0,
+        description="Number of records to skip (pagination offset)",
+    ),
+    limit: int = Query(
+        100,
+        ge=1,
+        le=100,
+        description="Maximum number of tasks to return",
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -52,10 +61,10 @@ def list_tasks(
     "",
     response_model=TaskResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Criar nova tarefa",
+    summary="Create a new task",
     description=(
-        "Cria uma nova tarefa associada ao usuário autenticado.\n\n"
-        "A tarefa será automaticamente vinculada ao `owner_id` do usuário atual."
+        "Creates a new task associated with the authenticated user.\n\n"
+        "The task is automatically linked to the current user's `owner_id`."
     ),
 )
 def create_new_task(
@@ -72,20 +81,26 @@ def create_new_task(
 @router.get(
     "/{task_id}",
     response_model=TaskResponse,
-    summary="Obter tarefa por ID",
-    description="Retorna uma tarefa específica pertencente ao usuário autenticado.",
+    summary="Get task by ID",
+    description="Returns a specific task belonging to the authenticated user.",
 )
 def get_task(
     task_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    task = get_task_by_id_and_owner(db, task_id=task_id, owner_id=current_user.id)
+    task = get_task_by_id_and_owner(
+        db,
+        task_id=task_id,
+        owner_id=current_user.id,
+    )
+
     if not task:
         raise HTTPException(
             status_code=404,
-            detail="Task não encontrada ou não pertence ao usuário",
+            detail="Task not found or does not belong to the user",
         )
+
     return task
 
 
@@ -95,10 +110,9 @@ def get_task(
 @router.put(
     "/{task_id}",
     response_model=TaskResponse,
-    summary="Atualizar tarefa",
+    summary="Update a task",
     description=(
-        "Atualiza os dados de uma tarefa existente.\n\n"
-        "Somente tarefas do usuário autenticado podem ser modificadas."
+        "Updates an existing task.\n\nOnly tasks owned by the authenticated user can be modified."
     ),
 )
 def update_existing_task(
@@ -107,9 +121,18 @@ def update_existing_task(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    task = get_task_by_id_and_owner(db, task_id=task_id, owner_id=current_user.id)
+    task = get_task_by_id_and_owner(
+        db,
+        task_id=task_id,
+        owner_id=current_user.id,
+    )
+
     if not task:
-        raise HTTPException(status_code=404, detail="Task não encontrada")
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found",
+        )
+
     return update_task(db, task=task, task_in=task_in)
 
 
@@ -119,16 +142,25 @@ def update_existing_task(
 @router.delete(
     "/{task_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="Excluir tarefa",
-    description="Remove permanentemente uma tarefa do usuário autenticado.",
+    summary="Delete a task",
+    description="Permanently deletes a task belonging to the authenticated user.",
 )
 def delete_existing_task(
     task_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    task = get_task_by_id_and_owner(db, task_id=task_id, owner_id=current_user.id)
+    task = get_task_by_id_and_owner(
+        db,
+        task_id=task_id,
+        owner_id=current_user.id,
+    )
+
     if not task:
-        raise HTTPException(status_code=404, detail="Task não encontrada")
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found",
+        )
+
     delete_task(db, task=task)
     return None

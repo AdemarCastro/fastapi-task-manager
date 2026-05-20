@@ -4,9 +4,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class TaskBase(BaseModel):
-    title: str = Field(..., example="Estudar FastAPI", description="Título da tarefa")
+    title: str = Field(
+        ..., description="Título da tarefa", json_schema_extra={"example": "Estudar FastAPI"}
+    )
     description: str | None = Field(
-        None, example="Completar o projeto P01", description="Detalhes opcionais"
+        None,
+        description="Detalhes opcionais",
+        json_schema_extra={"example": "Completar o projeto P01"},
     )
     is_done: bool = Field(False, description="Status de conclusão")
 
@@ -23,7 +27,7 @@ class TaskUpdate(BaseModel):
 
 class TaskResponse(TaskBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int = Field(..., example=1)
-    owner_id: int = Field(..., example=10)
+    id: int = Field(..., json_schema_extra={"example": 1})
+    owner_id: int = Field(..., json_schema_extra={"example": 10})
     created_at: datetime
     updated_at: datetime
