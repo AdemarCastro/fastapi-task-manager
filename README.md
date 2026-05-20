@@ -211,6 +211,8 @@ Contributions are welcome! Please follow the conventional commit format:
 | `refactor:` | Code improvement without behaviour change |
 | `test:` | Adding or updating tests |
 | `chore:` | Tooling, config, or dependency changes |
+| `ci:` | Continuous integration |
+| `deploy:` | Deployment configuration or release changes |
 
 ---
 
