@@ -2,7 +2,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Task Manager API"
+    PROJECT_NAME: str = "FastAPI Task Manager"
+    APP_ENV: str = "development"
+    APP_NAME: str = "TaskManager"
+    APP_DEBUG: bool = True
     VERSION: str = "0.1.0"
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5433/taskmanager"
     SECRET_KEY: str = "dev-secret-key-change-in-production"

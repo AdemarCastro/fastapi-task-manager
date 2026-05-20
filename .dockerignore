@@ -10,12 +10,12 @@ dist/
 *.egg
 MANIFEST
 
-# Virtual env (NÃO copiar para a imagem!)
+# Virtual env
 .venv/
 venv/
 env/
 
-# Environment variables (segurança!)
+# Environment variables
 .env
 .env.local
 .env.*.local
@@ -39,7 +39,7 @@ htmlcov/
 .git/
 .gitignore
 
-# Docker (evitar loop)
+# Docker
 docker-compose*.yml
 Dockerfile*
 .dockerignore
@@ -49,6 +49,6 @@ Dockerfile*
 Thumbs.db
 desktop.ini
 
-# Docs (opcional, para imagem menor)
+# Docs
 *.md
 docs/

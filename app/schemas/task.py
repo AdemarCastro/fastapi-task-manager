@@ -5,14 +5,19 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class TaskBase(BaseModel):
     title: str = Field(
-        ..., description="Título da tarefa", json_schema_extra={"example": "Estudar FastAPI"}
+        ...,
+        description="Task title",
+        json_schema_extra={"example": "Study FastAPI"},
     )
     description: str | None = Field(
         None,
-        description="Detalhes opcionais",
-        json_schema_extra={"example": "Completar o projeto P01"},
+        description="Optional task details",
+        json_schema_extra={"example": "Complete P01 project"},
     )
-    is_done: bool = Field(False, description="Status de conclusão")
+    is_done: bool = Field(
+        False,
+        description="Completion status",
+    )
 
 
 class TaskCreate(TaskBase):
@@ -20,14 +25,30 @@ class TaskCreate(TaskBase):
 
 
 class TaskUpdate(BaseModel):
-    title: str | None = Field(None, description="Novo título")
-    description: str | None = Field(None, description="Nova descrição")
-    is_done: bool | None = Field(None, description="Atualizar status")
+    title: str | None = Field(
+        None,
+        description="Updated task title",
+    )
+    description: str | None = Field(
+        None,
+        description="Updated task description",
+    )
+    is_done: bool | None = Field(
+        None,
+        description="Updated completion status",
+    )
 
 
 class TaskResponse(TaskBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int = Field(..., json_schema_extra={"example": 1})
-    owner_id: int = Field(..., json_schema_extra={"example": 10})
+
+    id: int = Field(
+        ...,
+        json_schema_extra={"example": 1},
+    )
+    owner_id: int = Field(
+        ...,
+        json_schema_extra={"example": 10},
+    )
     created_at: datetime
     updated_at: datetime

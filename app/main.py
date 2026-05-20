@@ -9,7 +9,7 @@ security = HTTPBearer()
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="API REST para gerenciamento de tarefas com autenticação JWT.",
+    description="REST API for task management with JWT authentication.",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
@@ -19,7 +19,14 @@ app.include_router(auth.router, tags=["Authentication"])
 app.include_router(tasks.router, tags=["Tasks"])
 
 
-@app.get("/health", tags=["System"])
+@app.get(
+    "/health",
+    tags=["System"],
+    summary="Health check",
+    description="Checks if the API is running and operational.",
+)
 def health_check():
-    """Verifica se a API está operacional."""
-    return {"status": "ok", "message": "API is running"}
+    return {
+        "status": "ok",
+        "message": "API is running",
+    }
