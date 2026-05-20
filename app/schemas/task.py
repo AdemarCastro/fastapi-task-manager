@@ -1,27 +1,22 @@
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
-
-
 class TaskBase(BaseModel):
-    title: str
-    description: str | None = None
-    is_done: bool = False
-
+    title: str = Field(..., example="Estudar FastAPI", description="Título da tarefa")
+    description: str | None = Field(None, example="Completar o projeto P01", description="Detalhes opcionais")
+    is_done: bool = Field(False, description="Status de conclusão")
 
 class TaskCreate(TaskBase):
     pass
 
-
 class TaskUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    is_done: bool | None = None
-
+    title: str | None = Field(None, description="Novo título")
+    description: str | None = Field(None, description="Nova descrição")
+    is_done: bool | None = Field(None, description="Atualizar status")
 
 class TaskResponse(TaskBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int
-    owner_id: int
+    id: int = Field(..., example=1)
+    owner_id: int = Field(..., example=10)
     created_at: datetime
     updated_at: datetime
