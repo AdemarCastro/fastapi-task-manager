@@ -381,7 +381,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-**Made with ♥ by [Ademar Castro](https://github.com/AdemarCastro)**
+**Made by [Ademar Castro](https://github.com/AdemarCastro)**
 
 [🔗 Portfolio](https://ademar-castro.duckdns.org/) · [💼 LinkedIn](https://www.linkedin.com/in/ademar-castro-8bb95b256/)
 
