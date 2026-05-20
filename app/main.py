@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from fastapi.security import HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer
 
 from app.api import auth, tasks
 from app.core.config import settings
@@ -26,6 +26,7 @@ app.add_middleware(
 
 app.include_router(auth.router, tags=["Authentication"])
 app.include_router(tasks.router, tags=["Tasks"])
+
 
 @app.get(
     "/health",
